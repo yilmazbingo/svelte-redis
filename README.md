@@ -1,0 +1,1 @@
+- In redis we first decide the quesries and based on these queries we store the data in data structures.

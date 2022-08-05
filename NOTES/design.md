@@ -1,0 +1,2 @@
+- In SQL database design methodology, we first put everyting into the database and then figure out how we will query about that
+- Redis Design Methodology , we first figure out what queries we need to answer, and then we are going to structure our data

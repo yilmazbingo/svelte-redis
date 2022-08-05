@@ -1,0 +1,2 @@
+- in hash tables, we are not allowed to have deeply nested data structures.
+- some client libraries return array of valuew and you have to assemble them into an object
