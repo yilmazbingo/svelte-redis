@@ -7,6 +7,20 @@
 
 ## CAP Theorem
 
+you have a bank and have only 2 atms. you keep balance in each atm whenever they deposit or withdraw, you send update request to other and have consistent data. in 3 ways you might have issus:
+1- your atm is not working but other is working. you just put a sign that out of order
+2- yours is working but other is not working
+3- they both are working but there is a network problem and they cannot talk to each other. distributed system has suffered a `partition` in this case. what doeS ATM do next when this partition happens. this is the design decision that the `CAP` theorem talks about. the system has to make a choice. it can either be `consistent` or `available` but cannot do both. If you haVE consistent design, atm would not process your request becuase it cannot update the balance in the other ATM. On the other hand, it gave up availability. If you choose the availability, your atm would process the request, keep track of what happened and later when the partition heals, it just tells other atm what has happened.
+
+In the real world we can talk about degree of consistency and degrees of availability and make trade-off between. for example in partially available design
+
+    - deposits yes
+    - withdrawals no or maybe small amounts. rate limit. balance wont go negative too quickly.
+    - balance info no or tentative means we ara not sure
+    this would stop bank balance going negative but it would still have our balances inconsistent.
+
+sacrificing consistency is not only way we could increase availability in our system. you could add battery backups. we could have better network connection. we could buy redundant connections so that when one network conncetion fails we can just use another.
+
 Availability, Consistency, Partition-Tolerance
 
 - MySql is highly available and consistent. But it gives up partition tolerance: it is very difficult to partition MySql accross horizontally scaled fleets. It actully is possible in modern MySql, the truth is CAP theorem is a lot weaker than it used to be. A lot of those databases actually do a good job of giving you the best of all worlds.

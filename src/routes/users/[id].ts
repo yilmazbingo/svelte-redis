@@ -24,6 +24,8 @@ export const get: RequestHandler<Params, any> = async ({ params, locals }) => {
 				};
 			}),
 			likedItems: (liked || []).map((item) => {
+				console.log('item in mapp liked', item);
+
 				return {
 					...item,
 					endingAt: item.endingAt.toMillis(),

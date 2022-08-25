@@ -9,7 +9,6 @@ export const get: RequestHandler<any, any> = async ({ url, locals }) => {
 		direction: url.searchParams.get('direction') ?? '',
 		tag: (url.searchParams.get('tag') ?? '').replace(/[^a-zA-Z0-9 -]/gi, '')
 	};
-
 	const { items, totalPages } = await itemsByUser(locals.session.userId, sort);
 
 	return {

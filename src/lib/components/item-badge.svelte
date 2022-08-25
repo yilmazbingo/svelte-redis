@@ -16,6 +16,7 @@
 	export let item: ItemSummary;
 
 	function status(item: ItemSummary) {
+		console.log('item ins function status', item);
 		let t = typeof item.endingAt === 'object' ? (item.endingAt as any).toMillis() : item.endingAt;
 		const ended = DateTime.fromMillis(t) < DateTime.now();
 		const sold = item.price > 0;

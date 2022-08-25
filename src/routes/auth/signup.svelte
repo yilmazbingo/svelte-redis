@@ -12,6 +12,7 @@
 		[_data, err] = await post('/auth/signup', { username, password });
 
 		if (err) {
+			console.log('error in signup', err);
 			return;
 		}
 

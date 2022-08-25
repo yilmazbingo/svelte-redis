@@ -3,6 +3,7 @@ import { signup } from '$services/auth/auth';
 
 export const post: RequestHandler = async ({ request, locals }) => {
 	const { username, password } = await request.json();
+	console.log('username', username);
 
 	const userId = await signup(username, password);
 
