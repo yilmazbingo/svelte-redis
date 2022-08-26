@@ -18,3 +18,16 @@ decentralization gives us alot of workers but the benefit of lots of workers if 
 **REPLICATION** When the load on our system increases, one machine is no longer is able to handle the load. we horizontally scale and create more instances.
 
 there are two kinds of replication: `stateless` and `statefull`. in stateless only code is replicated. in statefull data and code replicated. in database case, any write happens in one instance happens in other instance.
+
+## Stateful Replication
+
+when first user sends a request, there wont be anything in the memory of our web application which is an instance. we get the user profile from db. before sending the response we save the data in the memory of let's say Instance3. But next request can go to any instance. so this is achieved through `sticky` session. when the request first comes to Instance3, that time it will create a session which will have id. when the response sent to the client, client is supplied by a cookie. so next time this client makes a request this cookie will be attached to the request, and load balancer will look at the cookie and load balancer will know that that request has to be forwarded to Instance3. there are some limitations.
+
+1- Scalablity
+each session occupies memory. so if more users connect and we create session for each, we might consume all the memoery in the instance. maybe cpu capacity can handle 2000 connections, if each session takes up 1mb and we have 500mb space we can serve only 500 connections. now we need 4 extra machines to do the same thing. so this approach will require us to deploy many more machines.
+2- Reliability
+what is Instance3 goes down. load balancer will route the request to other instances but they do not have cache. All the uses stored in Instance3 will have high latency. another thing if the user makes some updates but updates are not written into the db and then server is lost.
+
+One solution is each session gets clustered means they are stored in all other instances. But prefer method is the stateless replication.
+
+## Stateless Replication:
