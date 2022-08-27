@@ -31,3 +31,40 @@ what is Instance3 goes down. load balancer will route the request to other insta
 One solution is each session gets clustered means they are stored in all other instances. But prefer method is the stateless replication.
 
 ## Stateless Replication:
+
+we do not cache anything on application. we wont get memory issue, we will have higher scalability but high latency for getting data from db. we can overcome this by using server-side caching (memcached/redis) instead of caching data on application instance memory (i think server memory).
+
+- we could also store the session on user-side instead of in shared cache, this will reduce the latency. cookies cannot get alot of data. cookie is good for small amount of data.
+
+- we can also replicate services stateless. whewn we replicate any component we are adding extra complexity, in terms of shared resources.
+
+## Database Replication:
+
+we can create `Read Replica` for higher read scalability. we can also create `backup` which is used for high availbality
+There are two replcations:
+1- Master-Slave (Primary-Secondary)
+Client can send "read and write" to Primary but can send only "read" to secondary. The sync between Primary and seondary is done by `Uni-directional replication` meaning that any changes has done to master db, they are propageted to seocndary in due course of time. it can be done async or sync. In sync transaction sent to seoncdary and if secondary confirms then transaction is committed.
+
+- the benefit of this config is high-read scalability and high-read availability. we could have many more replicas. if our read load is high, client can go to any read replica, that way they can reduce the load from the master and master be used for writes. this is high scalalable. if one of read replicas goes down others can serve so this is high availability. even if master goes down, read requests can still be served.
+
+**async Replication**
+When a client does a transaction, that transaction first completed on master database and the acknowledgement is sent back to the client. Once the transction is done, then the changes are propagated to the secondary database. Because transactions only involve in master database, they are faster compared to the transcations in case of sync replication because in sync, for a transaction to be successful, it has to be done on both database.first master then seocndary then only acknowledgement will be returned to the client. in async writes have lower latency
+
+In case of async replication there is a lag between these two databases. the data is on secondary may not be the most recent data. so data is not consistent. it is `eventual consistent`. in case of sync replication, data is always consistent. we declare the transaciton is done only when the transaction is completed on both sides.
+
+if mmaster db dies and changes are not propagated to the read dbs, secondary database will be promoted as the primary but those recent changes might have lost forever. if we use this configuration for backup, in case a master goes down, it may result in data loss.
+
+In case of sync replication there wont be data loss but there will be low availability. if read db goes down in sync replication, we are not going to complete our write transaction on master database because we declare our transactions to be completed in sync replication only when they are completed on secondary db.
+
+- In sync replication it does not matter which database goes down, our write will become unavailable, while in case of async replication, write will become unavailable only if master goes down.
+
+We can use async replication in the cases where we need high read performance, low latency reads and we also need low latency writes
+in sync replication we would use to create a backup. we will still have multiple read replicas but one replica in case if our master goes down. this will bring down latency but it will increase the availabilit of our writes.
+
+2- Master-Master (No-Master/Peer-to_peer)
+
+it is not popular. there is no master. client can both read and write on any of instances. the sync between is `bi-directional replication`. any change is done one db is propagated to other one. it is usually async replication. we avoid this beacuse there is a possibility of write conflict. if you make a change on one db1 and db2 about same time and if we are modifying the same record, when we reconcile the data between two dbs, that will result in a write conflict.
+
+In master-slave config, there is only one source of truth because we write ONLY ON MASTER. there will no write conflic in master-slave. but it provide high availability.
+
+It has use case wheere we want to independently write on two databases the reason can be that they are sitting in two different regions. Let's say you want to have a gloabl db where users are allowed to write on any continent

@@ -13,3 +13,14 @@
 ## Disk Latency
 
 Disk IO is very slow. Loggind is a special case of IO. disk access penalties that are related to logging are not high. high disk penalties are in web content files and db disk access.
+
+**Minimizing Disc Latency**
+1- Logging: it is require to write on a file. if we write on a file line by line, this is a `sequential write`. Let's say we write of some data on one mmeory location, then some other memory location, this is called `random disk io`. Both can be read and write. Sequential io much faster. whereever possible do asynchronous logging. what that does is the main thread which is doing computation and it has to do logging. it basically transfers that data to be logged to another thread. main thread will not leave the cpu, it will continue to occupy a cpu for as much time as possible, that will make our process extremely efficient and we would be able to achieve that by doing async io. the only downside of async io is, if somewhere if application crashes , then there is no guarantee that the last few statements would have been logged by async logger. if there is nothing extremely critical that has to be logged, prefer async logging.
+
+2- web content files: any web app is associcated with a lot of static data which is stored as files. fetching file involves IO. one way is to avoid cost of refetching, keep file in memory. `web content caching` is important. the way of caching, we utilize `reverse proxy`. on reverse proxy we keep static data and dynamic data comes through web application. we generally have very high memory for any reverse proxy. reverse proxy is specialized dealing with files.
+
+3- Db Disk Access. cache the data from db so avoid the disk access to db. If you detected that disk IO is a problem in the system `Denormalization` will help here. instead of fetching related data from diffrent tables which requires disk rotation and they will be separete IO's, so it takes more time, we fetch data from one table. Normally Normalization is preferred because it will require less memory in the databaase and it will reduce the amount of data we have to write.
+
+Another thing on schema optimization is `index`es. it helps us fetching data efficiently. without index we have to do full table scan to find an instance.
+Optimize queries.
+Where disk io is critical we can use `SSD` disk.

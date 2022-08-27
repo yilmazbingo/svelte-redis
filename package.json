@@ -55,7 +55,7 @@
 		"material-icons": "^1.10.7",
 		"nodemon": "^2.0.15",
 		"pm2": "^5.2.0",
-		"redis": "^4.0.3",
+		"redis": "^4.3.0",
 		"redis-cli": "^2.1.2",
 		"ts-node": "^10.5.0",
 		"ts-node-dev": "^1.1.8"
