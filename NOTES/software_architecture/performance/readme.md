@@ -1,22 +1,26 @@
 ## Performance Problems
 
 Every performance problem is the result of some queue building somewhere. Requests gets queued up somewhere, Network socket queue, DB IO queue, OS run queue. Resons for build up
+
 1- Inefficient slow processing
 2- serial resource access: For depositing and withdrawing, only one thread can access to account. if depostiing halts, withdraw will wait
 3- Limited resource capacity
+
 ## Performance Principles
+
 1- Efficiency (In the context of serial request processing)
 we have a single request in our system. speed of processing this request mostly depends on the code.
 
 - We have efficient resource Utilization. a machine will have IO resources, memory, network, disk, and compute resources CPU.
 - algorithms and db queries should be efficient. this is developer's job
 - efficient data structures for storages. db schema if we search something, make sure that record is indexed. use caching
-2- Concurrency
+  2- Concurrency
   we have concurrent requests here. our hardware should allows us for conccurrent requests. Our code should be written for concurrent execution. In concurrency multiple requests are executed concurrently. So execution each request itself should be efficient as we discussess in Efficieny topic
-3- Capacity
+  3- Capacity
   If we get better hardware, we get better performance
 
 ## System Performance Objectives
+
 1- Minimize Request-response latency
 Latency is measured in time units. How much time a request-response spends withing a system. Wait/idle Time + Processing time. request goes through, web applicaton =>business application=>database
 There are some components which are not request/response based. If we are generating a report which reads data from a db and processed that data and makes a report. This kind of processs is doing `batch processing`. we have concept of batch processing time but not req/res. In req/res we are interested in `latency and throughput` but for batch processing we are interested in throughput only.
@@ -24,12 +28,14 @@ There are some components which are not request/response based. If we are genera
 throughput is a measure of how many requests a system can process in a given time. It is a rate of request processing. Low latency and High Capacity increses the throughput.
 
 ## Performance Measurement Metrics:
+
 4 important metrics are
 
 - Latency
 - Throughput: Higher the throughput, higher number of users can be supported.
 - Errors
 - Resource Saturation: If we do not measure resource saturation, we will never come to know whether our hardware is over utilized or underutilized
+
 ## Network Latency
 
 There are two kinds of network. Between Broser and web application. Inernal Network, webApp => Services =>DB
@@ -100,96 +106,102 @@ Where disk io is critical we can use `SSD` disk.
 we are assuming we alredy mnimized single request latency. No system is truly parallel. they might start paralel, then executed serially and then parallel again in each different workflow. In general, we have to take logs, coordinate threads, synchronize the code. So there will serial portions within a parallel process. Depending upon how much serial component is there, we will see performance graph increasing graph with diminishing return. Amdhal tells how much the serail portion effects the performance graph.
 if it was a perfectly parallel system, the rate would have been perfectly linear. If there is a serial portion within a process, it does not matter 1 percent or 2 percent the rate of graph will be flat after a given point. Amdhal's law calculates how soon the graph is going to flatten out. If it is flatten out that means throughput has decreased.
 
-If you want to make a system highly performing, we have to keep the serial portion as low as possible. 
+If you want to make a system highly performing, we have to keep the serial portion as low as possible.
 During this serial portion, multiple threads/processes that are executing, get `queueing`. That results into queuing.
+
 ## Gunther's Universal Scability law
-Universal scalabilit law points to `coherence` which limits the concurrency of any system. Amdhal's law deals only with queueing. Universal sclability law combines both queueing and coherence effect. 
+
+Universal scalabilit law points to `coherence` which limits the concurrency of any system. Amdhal's law deals only with queueing. Universal sclability law combines both queueing and coherence effect.
 **Coherence:** Let's say you have a multi-threaded application where you have multiple threads executing on multiple processors. They share same main memory but their processor registered memory which is L1,L2 memory cache, they are unique to processor, so they are not shared. If you want a particular variable to have a coherent value between all threads, then you declare that variable volatile. Volatile means, copy of that variable should remain consistent in all processors. for a normal variable, you can have separate copies of these variables in each processor and you can modify them independently, you can have different values in different threads for the same variable that possible.
 
 In computer programming, particularly in the C, C++, C#, and Java programming languages, the volatile keyword indicates that a value may change between different accesses, even if it does not appear to be modified.
 
-If that variable is modified in one thread, that will force a refresh of that variable in other processors, memory space as well. Their cache will be also refreshed. Because we changed a variable in one processor that will lead to change in the value of that variable and other processor cache as well. This comes at a performance cost. 
-If we have alotof variables that are shared and we modify them alot, this means that in such an application, the coherent cost will be high. So if increase the number of threads or number of processors, number of users in order to increase the `throughput`, then `throuhgput` does not increase but instead it starts decreasing. In Amdhal's Law, because of queuieng effect, we see that throughput graph starts decreasing. `Queueing` will never bring down your graph, it will flatten. but `coherence` can bring down the `throughput` graph. 
+If that variable is modified in one thread, that will force a refresh of that variable in other processors, memory space as well. Their cache will be also refreshed. Because we changed a variable in one processor that will lead to change in the value of that variable and other processor cache as well. This comes at a performance cost.
+If we have alotof variables that are shared and we modify them alot, this means that in such an application, the coherent cost will be high. So if increase the number of threads or number of processors, number of users in order to increase the `throughput`, then `throuhgput` does not increase but instead it starts decreasing. In Amdhal's Law, because of queuieng effect, we see that throughput graph starts decreasing. `Queueing` will never bring down your graph, it will flatten. but `coherence` can bring down the `throughput` graph.
+
 ## Shared Resource Contention
-Contention and coherence are the biggest killers of concurrency. If server is very busy, we can have two keeps. LIsten/Accept. Listen queue reaches its max capacity, new requests will not be accepted. We need to avoid a queue in our system. Queueu is unwanted latency. it is the killer of concurrency. If we increase the concurrency queue disappears. First place of queue build up is Listen/Accept queue. 
-In order to get Cpu, request should be allocated to a thread. There are limited treads in any process. If a system is overloaded, then there will be contention for a thread from a fixed size threadpool. this is the second contention a process will face. 
+
+Contention and coherence are the biggest killers of concurrency. If server is very busy, we can have two keeps. LIsten/Accept. Listen queue reaches its max capacity, new requests will not be accepted. We need to avoid a queue in our system. Queueu is unwanted latency. it is the killer of concurrency. If we increase the concurrency queue disappears. First place of queue build up is Listen/Accept queue.
+In order to get Cpu, request should be allocated to a thread. There are limited treads in any process. If a system is overloaded, then there will be contention for a thread from a fixed size threadpool. this is the second contention a process will face.
 If the request has been allocated a thread and it is executing on a process, there can be increased contact switching due to contention. If we keep threads pool with sufficient limit, there should not be contention because of the fact that there are too many requests that are running over here. there will context swithcing only in case of any IO or logs that process is waiting for. Now request is processing but we cannot have infinite number of connections to any back end. There will be some definite number of connections available through a connection pool. Now those threads will have to content for a connection from the connection pool.
-If we are doing alot of IO, disk can be a source of contention which is always true in case of db. whenever we are doing process on database  and there is alot of data being fetched from disk, we see that there is contention for disk. 
+If we are doing alot of IO, disk can be a source of contention which is always true in case of db. whenever we are doing process on database and there is alot of data being fetched from disk, we see that there is contention for disk.
 Thre can be contention for network. sometimes happens in microservices that internal networks get choked because there are so many call which are being done to different services. Network availability is another thing for which there can be contention
-The biggest sourceo of contention in any workflow is acquiring locks. this is the serial part of the code that "locks serialize". they are the gatekeepers to the serial portions of code. If multiple threads are trying to access ame lock then that lock can become a source of contention. 
+The biggest sourceo of contention in any workflow is acquiring locks. this is the serial part of the code that "locks serialize". they are the gatekeepers to the serial portions of code. If multiple threads are trying to access ame lock then that lock can become a source of contention.
+
 ## Minimize Shared Resource Contention
-- Cpu/Disk/Network: As we increase the number of request. Make sure single request latency is in control. For network and memory, we have nothing that we can do apart from  vertically scaling our system. `RAID` disks are redundant array of independent disk, this will allow parellel access to disk. When you have redundant array of independent disk, your data is copied on multiple disks. If there are multiple threads which are looking for the same data now data is available on multiple disk which can be accessed parallely. we can increse the performance of db by using RAID disks. 
-- Listens Queeue= we generally dont do anything. It becomes a problem when we go to extreme scales. When requests are rejected by large listen queue, then we can tune the operating system parameters to increase the ListenQueue size. 
-- TreadPool Size= it is a collection of worker threads that are dedicated for a single purpose. ThreadPool is provided by the container that our webapp is running: Jetty,If we have smaller pool size the contention will increase, listen queue will grow up which will mean alot of requests will wait for threads to be allocated. If we have a larger thread pool size, those thread will sits idle. 
+
+- Cpu/Disk/Network: As we increase the number of request. Make sure single request latency is in control. For network and memory, we have nothing that we can do apart from vertically scaling our system. `RAID` disks are redundant array of independent disk, this will allow parellel access to disk. When you have redundant array of independent disk, your data is copied on multiple disks. If there are multiple threads which are looking for the same data now data is available on multiple disk which can be accessed parallely. we can increse the performance of db by using RAID disks.
+- Listens Queeue= we generally dont do anything. It becomes a problem when we go to extreme scales. When requests are rejected by large listen queue, then we can tune the operating system parameters to increase the ListenQueue size.
+- TreadPool Size= it is a collection of worker threads that are dedicated for a single purpose. ThreadPool is provided by the container that our webapp is running: Jetty,If we have smaller pool size the contention will increase, listen queue will grow up which will mean alot of requests will wait for threads to be allocated. If we have a larger thread pool size, those thread will sits idle.
 - ConnectionPool SIze=if you have 100 threads, you should have 100 connections. Those pools can be server=>service or service=>DB
 - Locks/Semaphores
   **Minimize Lock Contention**
-  - Reduce the duration for which a lock is held. 
-    Move out the code, out of sync block. 
+  - Reduce the duration for which a lock is held.
+    Move out the code, out of sync block.
   - Lock Splitting: Split locks into lower granularity locks that are experiencing moderate contention. Duration for locks will be reduced
-  - Lock Striping: 
+  - Lock Striping:
   - Replace exclusive locks with coordination mechanism
-  **Pessimistic Locking**
-  When we are dealing with shared data, we often take locks so that we do not do concurrent updates, otherwise that will result in data corruption. Let's say in an ecommerce app, users are booking orders to buy certain products as a result we have multiple threads running concurrently and are contenting for the same inventory of those products. In pessimistic locking,we fetch the shared data and we lock it so noone else can lock it. In this case our shared data is records in the db. Then we process this data and once processing is done we update the db with the latest records. Then we release the lock by commiting the transaction. Transaction duration is very long. we took lock in the beginning and we release it at the end of the transaction. In optmistic Lcoking duration is much smaller. 
-   Multiple threads will start to execute the code for fetching data and only one of them will be able to get the lock. In case of SQL db, `SELECT` statement will take the lock. From here onwards, there will be only one thread will be execute the code and all of other threads will blocked. Pessimistic locking is used when there is high contention. 
-  **Optimistic Locking**
-  We are going to fetch the data without any locks. Then we will process this data, update the data if and only if data is not stale, of data is stale we back off the thread. For example if we had 100 items in inventory and we have to update it 99 but if another thread already used 1 it should be 98, but if update we would update it as 99 we will restart the thread. We had race condition here. If we had a few race conditions that is not a big deal but if the race condition is so much alotof threads have to restart which will be very expensive. we use `optimistic` only when contention is moderate to low. Otherwise will run in a loop. If the thread is successful then we will do commit. Duration of lock is from update till and committing. During the fetching and updateing the data, other threads will be able to execute the code concurrently. 
-  **Compare and Swap**
-  It is optimistic locking mechanism. In nosql databases do not allow transactions. the only way to ensure atomicity here is through optimistic locking.  let's say we are fetching data from inventory database. product has 100 avaialble items. Many threads can read that value and upadte it. compare and swap mechanism provided by the cpu. 
-  **DeadLock**
-  It can bring down our system completely. we need to guard our system agains possible deadlocks. 
+    **Pessimistic Locking**
+    When we are dealing with shared data, we often take locks so that we do not do concurrent updates, otherwise that will result in data corruption. Let's say in an ecommerce app, users are booking orders to buy certain products as a result we have multiple threads running concurrently and are contenting for the same inventory of those products. In pessimistic locking,we fetch the shared data and we lock it so noone else can lock it. In this case our shared data is records in the db. Then we process this data and once processing is done we update the db with the latest records. Then we release the lock by commiting the transaction. Transaction duration is very long. we took lock in the beginning and we release it at the end of the transaction. In optmistic Lcoking duration is much smaller.
+    Multiple threads will start to execute the code for fetching data and only one of them will be able to get the lock. In case of SQL db, `SELECT` statement will take the lock. From here onwards, there will be only one thread will be execute the code and all of other threads will blocked. Pessimistic locking is used when there is high contention.
+    **Optimistic Locking**
+    We are going to fetch the data without any locks. Then we will process this data, update the data if and only if data is not stale, of data is stale we back off the thread. For example if we had 100 items in inventory and we have to update it 99 but if another thread already used 1 it should be 98, but if update we would update it as 99 we will restart the thread. We had race condition here. If we had a few race conditions that is not a big deal but if the race condition is so much alotof threads have to restart which will be very expensive. we use `optimistic` only when contention is moderate to low. Otherwise will run in a loop. If the thread is successful then we will do commit. Duration of lock is from update till and committing. During the fetching and updateing the data, other threads will be able to execute the code concurrently.
+    **Compare and Swap**
+    It is optimistic locking mechanism. In nosql databases do not allow transactions. the only way to ensure atomicity here is through optimistic locking. let's say we are fetching data from inventory database. product has 100 avaialble items. Many threads can read that value and upadte it. compare and swap mechanism provided by the cpu.
+    **DeadLock**
+    It can bring down our system completely. we need to guard our system agains possible deadlocks.
   - Load Ordering Related Deadlocks
-  Let's say one thread wants to transfer money from "A Account => B Account" and another thread wants to transfer money from "B Account => A Account", simultaneously. This can cause a `deadlock`. 
+    Let's say one thread wants to transfer money from "A Account => B Account" and another thread wants to transfer money from "B Account => A Account", simultaneously. This can cause a `deadlock`.
 
-The first thread will take a lock on "Account A" and then it has to take a lock on "Account B" but it cannot because second thread will already took lock on "Account B". Similarly second thread cannot take a lock on A Account because it is locked by the first thread. so this transaction will remain incomplete and our system will lose 2 threads. To prevent this, we can add a rule that locks the database records in sorted order. So thread should look at accounts name or IDs and decide to lock in a sorted order: A => B. There will be a race condition here and whoever wins, process its code and the second thread will take over. This is the solution for this specific case but deadlocks may occur in many reasons so each case will have a different solution. 
+The first thread will take a lock on "Account A" and then it has to take a lock on "Account B" but it cannot because second thread will already took lock on "Account B". Similarly second thread cannot take a lock on A Account because it is locked by the first thread. so this transaction will remain incomplete and our system will lose 2 threads. To prevent this, we can add a rule that locks the database records in sorted order. So thread should look at accounts name or IDs and decide to lock in a sorted order: A => B. There will be a race condition here and whoever wins, process its code and the second thread will take over. This is the solution for this specific case but deadlocks may occur in many reasons so each case will have a different solution.
 
 Os has a deadlock detection mechanism with a certain interval of time, and when it detects the deadlock, it starts a recovery approach. [More on deadlock detection][1]
 
-In the example we lost 2 threads but if we get more deadlocks, those deadlocks can bring down the system. 
-  [1]: https://www.baeldung.com/cs/os-deadlock
+In the example we lost 2 threads but if we get more deadlocks, those deadlocks can bring down the system.
+[1]: https://www.baeldung.com/cs/os-deadlock
+
 ## Coherence Related Delays
-It is related to shared data. Queeing and coherence affects the concurrency. there is not much we can do about coherence delays. 
-If you have a multithread system and these multiple threads share some data, that is where coherence comes into the picture. If two threads work on a data they will load those data in their own cache. If we do not use any locking mechanism, any change made in one thread is not gonna be available in other cpu. 
+
+It is related to shared data. Queeing and coherence affects the concurrency. there is not much we can do about coherence delays.
+If you have a multithread system and these multiple threads share some data, that is where coherence comes into the picture. If two threads work on a data they will load those data in their own cache. If we do not use any locking mechanism, any change made in one thread is not gonna be available in other cpu.
+
 - **LOCKING (SYNCHRONIZED)**
-    all variables accessed inside a sync block are read from the main memory at the start of the sync block. 
-    all variables modified in a sync block are flushed to the main memory when the associated thread exisits the sync block instead of keeping in the cache.
-This cause serious, incorrect behaviours within a concurrent system. To avoid those, we do two things: we can add read/write access to this particular object under synchronized code. there is a huge cost involved when we have to read any object from the main memory. because it will increase the latency. we can alleviate this cost by changing the variable from synchronized to `volatile`. we are not gonna pay locking related penalties. we only have to pay penalties that are related to the visibility. It means that whenever value of the variable is modified in any of the processor, the other thread will be forced to read it. 
-Synchronization enures both locking and visibility, volatile ensures only visibility. Visibility still has coherence delays
+  all variables accessed inside a sync block are read from the main memory at the start of the sync block.
+  all variables modified in a sync block are flushed to the main memory when the associated thread exisits the sync block instead of keeping in the cache.
+  This cause serious, incorrect behaviours within a concurrent system. To avoid those, we do two things: we can add read/write access to this particular object under synchronized code. there is a huge cost involved when we have to read any object from the main memory. because it will increase the latency. we can alleviate this cost by changing the variable from synchronized to `volatile`. we are not gonna pay locking related penalties. we only have to pay penalties that are related to the visibility. It means that whenever value of the variable is modified in any of the processor, the other thread will be forced to read it.
+  Synchronization enures both locking and visibility, volatile ensures only visibility. Visibility still has coherence delays
 
 https://stackoverflow.com/questions/106591/what-is-the-volatile-keyword-useful-for/73677124#73677124
 
 ## CACHING
-Denormalization will make the request faster wherever we need to do joints. 
-In general Normalized schema works better whereever we need write performance. Amount of data we have to write is reduced by normalization. It also makes data represesntation compact so it becomes easier to cache it. 
- **HTTP Caching for Static Data**
- all the client requests will go through Proxy Server which can cache the responses. Proxy Server Cache is considered as a public place of caching. Browser cache is private. Reverse Proxy is set near the web Instances, it is internal proxy, and it can be used for caching. Reverse proxy cache is also private cache. 
 
- "How does a public cash or private cash knows what data should be cached"
-    "GET" request is good for cachign because it does not modify the data. But not every "GET" request good candidate for caching. Especially when "GET" requests serves that data with changes very frequently. Whenever web application sends back a response, it can put `cache-control` header on the response. it indicates if the request should be cached if it is cached for how long it should be cached. If request can be cached
-      - No-cache: Do not use the cached data withoud validating with the origin server. still used, cached but needs validation 
-      - Must-revalidate: like no-cache but need to validate only after its max-age
-      - No-store: absolutely no cache
-      - public: any shared cache can cache. it will be used by public so no need for validation
-      - private: only a client can cache
-      - Max age: for how long should be cached
-    **ETAG**
-    Etag is a hash for indicating that version of resource. When the server returns data, it hashes the data and set this hash value under ETAG. When you send a "PUT" request to the server to update a record, maybe simultaneously another user made the same "PUT" request and its request has been processed. Server will check your "PUT" data and will see that it is same update so it wont make another update, it will send you the updated data (by another user) and you will update your cache.
-  **Caching Dynamic Data**
-  We need dynamic data cache for services and web applications7
-  - Exclusive Cache
-    Each instance of web application caches in its own memory. we will have duplicated cached data. With adding rouuting, we can read the cookies and route the request to the proper instance. in scalability it has drawback but for performance it works well. 
-  - Shared Cache:
-    we externalize the caching to an external component. it will add another network hop. 
+Denormalization will make the request faster wherever we need to do joints.
+In general Normalized schema works better whereever we need write performance. Amount of data we have to write is reduced by normalization. It also makes data represesntation compact so it becomes easier to cache it.
+**HTTP Caching for Static Data**
+all the client requests will go through Proxy Server which can cache the responses. Proxy Server Cache is considered as a public place of caching. Browser cache is private. Reverse Proxy is set near the web Instances, it is internal proxy, and it can be used for caching. Reverse proxy cache is also private cache.
+
+"How does a public cash or private cash knows what data should be cached"
+"GET" request is good for cachign because it does not modify the data. But not every "GET" request good candidate for caching. Especially when "GET" requests serves that data with changes very frequently. Whenever web application sends back a response, it can put `cache-control` header on the response. it indicates if the request should be cached if it is cached for how long it should be cached. If request can be cached - No-cache: Do not use the cached data withoud validating with the origin server. still used, cached but needs validation - Must-revalidate: like no-cache but need to validate only after its max-age - No-store: absolutely no cache - public: any shared cache can cache. it will be used by public so no need for validation - private: only a client can cache - Max age: for how long should be cached
+**ETAG**
+Etag is a hash for indicating that version of resource. When the server returns data, it hashes the data and set this hash value under ETAG. When you send a "PUT" request to the server to update a record, maybe simultaneously another user made the same "PUT" request and its request has been processed. Server will check your "PUT" data and will see that it is same update so it wont make another update, it will send you the updated data (by another user) and you will update your cache.
+**Caching Dynamic Data**
+We need dynamic data cache for services and web applications7
+
+- Exclusive Cache
+  Each instance of web application caches in its own memory. we will have duplicated cached data. With adding rouuting, we can read the cookies and route the request to the proper instance. in scalability it has drawback but for performance it works well.
+- Shared Cache:
+  we externalize the caching to an external component. it will add another network hop.
 
 ## Caching Challenges
- Caching size and cache invalidation&Cache Inconsistency
- Cache smaller size objects. 
- **Cache Invalidation**
-  we can update or delete cached data everytime we are updating the source. After we are done updating in db, we update it in cache. This works if the cache is under our control. the advantage of this cache is we can easily avoid cash inconsistency. 
-  we specify TTL values for each data is supposed to be cached. TTL values are enforced through cache-control header `MAX-AGE`. when data is cached, this `ttl` value is also received. Disadvangtage is you have to figure out arbitrary value for each data. if we set high, TTL value, data might be inconsistent. Low ttl, will incalidate soon so we are going to hit the db very often. 
 
-  https://stackoverflow.com/questions/499966/etag-vs-header-expires/73673262#73673262
-  https://stackoverflow.com/questions/34512/what-is-a-deadlock/73669574#73669574
-  https://stackoverflow.com/questions/129329/optimistic-vs-pessimistic-locking/73669255#73669255
-  https://stackoverflow.com/questions/68271429/what-does-gunthers-negative-returns-from-incoherency-mean/73652515#73652515
-  https://stackoverflow.com/questions/39812808/understanding-amdahls-law/73623854#73623854
+Caching size and cache invalidation&Cache Inconsistency
+Cache smaller size objects.
+**Cache Invalidation**
+we can update or delete cached data everytime we are updating the source. After we are done updating in db, we update it in cache. This works if the cache is under our control. the advantage of this cache is we can easily avoid cash inconsistency.
+we specify TTL values for each data is supposed to be cached. TTL values are enforced through cache-control header `MAX-AGE`. when data is cached, this `ttl` value is also received. Disadvangtage is you have to figure out arbitrary value for each data. if we set high, TTL value, data might be inconsistent. Low ttl, will incalidate soon so we are going to hit the db very often.
+
+https://stackoverflow.com/questions/499966/etag-vs-header-expires/73673262#73673262
+https://stackoverflow.com/questions/34512/what-is-a-deadlock/73669574#73669574
+https://stackoverflow.com/questions/129329/optimistic-vs-pessimistic-locking/73669255#73669255
+https://stackoverflow.com/questions/68271429/what-does-gunthers-negative-returns-from-incoherency-mean/73652515#73652515
+https://stackoverflow.com/questions/39812808/understanding-amdahls-law/73623854#73623854

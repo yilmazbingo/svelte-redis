@@ -69,6 +69,7 @@ Token types, Bearer,MAC. those tokens can be of two formats, JWT or SAML
   " expires_in " : 3600 ,
   " refresh_token " : " 8xLOXBtZp8 " ,
   <!-- this is the symmetric key. we dont want man in the middle capture this.  -->
+
   " mac_key " : " adijq39jdlaska 9asud " ,
   " mac_algorithm " : " hmac - sha - 256 "
   }
@@ -87,3 +88,20 @@ Local Storage is accessible by the javascript code. Not safe.
 
 - Browser cookies are safest place. The biggest vulnerability to tokens come from Javascript. If we can safeguard our tokens from Js, we can secure our tokens. We can declare cookies as HTTP only, which means that JS cannot access those cookies. Browser cookies are vulnerable to CSRF attack but it can be prevented.
 - Mobile applications provide private locations where secret data can be kept safely.
+
+## Securing Data at Rest (at database)
+
+- hashed passwords
+- Transparent Data encryption: this is the feature that most db vendors provide. Whatever content is written on harddrive is encrypted. User does not know that. All backups are protected. encryption key will be in different file in db. When db needs to access data, it uses this key. key is also encrypted and its key is outside db. Downside of this, admins can see all the data. In health system, we want only doctor and patient this
+
+## SQL Injection
+
+attacker sends code alongside the query. use precompiled prepared statements. Query is already prepared and it is precompiled.
+
+## XSS Attack
+
+User sends code to db saved and other users fetch it. code might me :window.location="attacker.com". always validate input.
+
+## CSRF
+
+Bank should return a CSRF token in the response. it can send it as a cookie similar way a login cookie was provided. logIN cookie is http-only but csrf cookie is not http-only means that it is accessible by javascript. any domain "bank.domain" can access to that cookie.
