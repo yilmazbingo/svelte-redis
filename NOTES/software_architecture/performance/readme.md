@@ -3,7 +3,9 @@
 Every performance problem is the result of some queue building somewhere. Requests gets queued up somewhere, Network socket queue, DB IO queue, OS run queue. Resons for build up
 
 1- Inefficient slow processing
+
 2- serial resource access: For depositing and withdrawing, only one thread can access to account. if depostiing halts, withdraw will wait
+
 3- Limited resource capacity
 
 ## Performance Principles
@@ -15,16 +17,19 @@ we have a single request in our system. speed of processing this request mostly 
 - algorithms and db queries should be efficient. this is developer's job
 - efficient data structures for storages. db schema if we search something, make sure that record is indexed. use caching
   2- Concurrency
-  we have concurrent requests here. our hardware should allows us for conccurrent requests. Our code should be written for concurrent execution. In concurrency multiple requests are executed concurrently. So execution each request itself should be efficient as we discussess in Efficieny topic
+  we have concurrent requests here. our hardware should allow us for conccurrent requests. Our code should be written for concurrent execution. So execution each request itself should be efficient as we discussess in Efficieny topic
   3- Capacity
   If we get better hardware, we get better performance
 
 ## System Performance Objectives
 
 1- Minimize Request-response latency
+
 Latency is measured in time units. How much time a request-response spends withing a system. Wait/idle Time + Processing time. request goes through, web applicaton =>business application=>database
 There are some components which are not request/response based. If we are generating a report which reads data from a db and processed that data and makes a report. This kind of processs is doing `batch processing`. we have concept of batch processing time but not req/res. In req/res we are interested in `latency and throughput` but for batch processing we are interested in throughput only.
+
 2- Maximize throughput
+
 throughput is a measure of how many requests a system can process in a given time. It is a rate of request processing. Low latency and High Capacity increses the throughput.
 
 ## Performance Measurement Metrics:
@@ -39,9 +44,13 @@ throughput is a measure of how many requests a system can process in a given tim
 ## Network Latency
 
 There are two kinds of network. Between Broser and web application. Inernal Network, webApp => Services =>DB
+
 1- Data Transfer
+
 2- TCP Connection
+
 UDP is faster but not reliable. Handhake connection takes time
+
 3- SSL/TLS Connection
 
 **TO reduce network latency we can**
