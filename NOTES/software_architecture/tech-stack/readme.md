@@ -47,3 +47,36 @@ https://stackoverflow.com/questions/34855352/how-in-general-does-node-js-handle-
 - low latency: files that are stored on cloud storage, they are not stored on a directory structure, they are in a key-value pair. there is no overhead of directory structure.
 - High Thorughput is achieved because files are replicated over multiple servers. file1 might be replicated on 3 thre servers. if there are more readers for a particular file, it will be replicated even more. Also large files can be broken into chunks. Read become faster because we can parelly read multiple chunks and then combine those files and then give it to a user.
 - high availability. files are replicated on more servers
+  **Cloud CDN**
+  Static data size is larger that dynamic in any ecommerce app. CDN has alot of servers present in each continent and different countries. the job of those servers is to cache the data that is coming out of origin server if cacheable.
+
+## Memcached
+
+Memcache is a centralized cache. every service node will be connected to the memcached. values are stored as `blob`. it is better not cache large objects beacuse it will take too much space and you will store less cache obj.
+
+- we can set TTl for each cache data.
+- when memory is full, memcache will evict expired data first and then LRU data.
+- we can have a cluster of nodes for memcache.
+- Memcache follows cache-aside pattern. Using the Cache-Aside Pattern dictates that when you want to retrieve an item from the Data Store, first you check in your cache. If the item exists in the cache, you can use that. If the item does not exist in the cache, you have to query the data store, however on the way back you drop the item in the cache.
+
+How does client know which cluster node it should visit for a particular key? cline t will compute the consistent hashing. client is managing the state of the nodes.
+
+- retrieveing data latency is sub-miliseconds latency
+- If a Memcached server instance crashes, any object data stored within the session is gone
+
+## REDIS
+
+It came after memcached. so it filled all the gaps of memcached.
+
+- it is not just key-value cache, it is key-dataStructure cache.
+- redis is not only cache, but also a data store. whatever is written to the cache is also written to the disk. that allows us to take backups. this allows us to restart our cache nodes. If we restart them, our cache nodes will be prepopulated with the backup. we can restart the entire cluster.
+- redis also can be used as a messaging queue.
+
+## RABBITMQ
+
+Either a service `push` messages to other services or other services `pull` from the message queue.
+
+- FIFO
+- If we deliver message from service1 to service2 with without message queue, both services might be restful. But in the case of message queue, service1 and 2 cna be any service types. this is `interface decoupling`.
+- message queue can act as a message buffer. If service1 pushes messages in high rate and service cannot process it at the same rate, in between messge queue act as a message buffer. later on when service1 message sending rate decreases, service2 can consume those messages. If not we can add more consumers. this is a typical use case in streaming kind of work flow.
+- RabbitMQ can be used for "push' or "pull" but Kafka can be used only for `pull` based messaging.
