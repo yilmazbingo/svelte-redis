@@ -138,6 +138,7 @@ it can be partiooned so it can be horizonatally scalable.
 - serch is fast because you can have index on each column.
 - sharding for scalability. it is optional, you can swithc off
 - Master-slave replication with default async. so it is eventual consistent
+- in mongodb we have collections not tables.
 
 ## ANALYTICS
 
