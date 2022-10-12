@@ -16,6 +16,9 @@ Located on a single node where it ws declared and referenced by unique name. Bot
 - rabbitmq can support many protocols and AMQP is only one of them.
 
 - consumer can reject the message
+- simple queue is easy code split without multithreading.
+
+https://stackoverflow.com/questions/4828064/why-are-message-queues-used-insted-of-mulithreading
 
 ##### Queue properties
 
@@ -59,7 +62,7 @@ In RabbitMQ, there are four different types of exchanges that route the message 
 
 A direct exchange delivers messages to queues based on a message routing key. The routing key is a message attribute added to the message header by the producer. Think of the routing key as an "address" that the exchange is using to decide how to route the message. A message goes to the queue(s) with the binding key that exactly matches the routing key of the message.
 
-###### Default exchange (Nameless exchange)
+##### Default exchange (Nameless exchange)
 
 The default exchange is a pre-declared direct exchange with no name, usually referred by an empty string. When you use default exchange, your message is delivered to the queue with a name equal to the routing key of the message. Every queue is automatically bound to the default exchange with a routing key which is the same as the queue name.
 
@@ -80,3 +83,7 @@ Topic exchanges route messages to queues based on wildcard matches between the r
 A headers exchange routes messages based on arguments containing headers and optional values. Headers exchanges are very similar to topic exchanges, but route messages based on header values instead of routing keys. A message matches if the value of the header equals the value specified upon binding.
 
 A special argument named "x-match", added in the binding between exchange and queue, specifies if all headers must match or just one. Either any common header between the message and the binding count as a match, or all the headers referenced in the binding need to be present in the message for it to match. The "x-match" property can have two different values: "any" or "all", where "all" is the default value. A value of "all" means all header pairs (key, value) must match, while value of "any" means at least one of the header pairs must match. Headers can be constructed using a wider range of data types, integer or hash for example, instead of a string. The headers exchange type (used with the binding argument "any") is useful for directing messages which contain a subset of known (unordered) criteria.
+
+### Durability
+
+It is for queues and exchange. Persistence messages are stored in special persistency log file, allowing them to be restored once server gets up. Persistence has no effect a nun-durable queues.
