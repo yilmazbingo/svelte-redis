@@ -1,3 +1,5 @@
+- redis is single threaded
+
 ## why do we have expire option in `set`
 
 - `EX` allows you to designate how long to wait in miliseconds

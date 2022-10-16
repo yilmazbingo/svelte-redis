@@ -24,3 +24,40 @@ In computing, a system call is the programmatic way in which a computer program 
 - docker enables version control.
 
 - we want to deploy web app on 10 different nodes or 10 different host machines. we can use `Vagrant`. we write config in ruby.
+
+### Kubernetes
+
+- namins containers is better than ip address. cause, ip address might cahnge but name stays.
+- We used the term “Rolling Upgrade” to describe a situation where we have multiple servers (usually load-balanced) and we needed to keep “the application” online, while deploying a new version of software.
+
+### Rolling update
+
+- used when it is ok to have both old version and new version simultaneously
+- old version is incrementally replaced by a new version as the new version is incrementally rolled-out.
+- new version nodes are added to load-balancer node-pool and old-version nodes are removed
+
+### Canary deployment
+
+Canary deployments are a pattern for rolling out releases to a subset of users or servers. The idea is to first deploy the change to a small subset of servers, test it, and then roll the change out to the rest of the servers. The canary deployment serves as an early warning indicator with less impact on downtime: if the canary deployment fails, the rest of the servers aren't impacted.
+
+### Recreate Deployment
+
+- Old and new version cannot run at the same time.
+
+Users will experience some downtime because we need to stop the application before the new version is running. The application won't be available while the original version is shutting down and the new one is starting.
+
+On the other hand, this strategy is easy to set up. We don’t have to manage two different versions of the application simultaneously. If we choose this approach, the updated application will be available for all users immediately. This has a drawback though, because the new version might introduce bugs to the application, and the users will see those as well.
+
+### Blue Green Deployment
+
+https://stackoverflow.com/questions/42358118/blue-green-deployments-vs-rolling-deployments
+
+- it is used when we are deploying risky features. we cannot afford any downtime.
+- it requries some extra hardware.
+- old version and new version are deployed on different environments. user requests are redirected to the V2 environment. V1 is not serving any request but V2, that is why it requires hardware. if everything goes fine we bring down V1. Incase there is some problem with V2, requests are redirected to V1.
+
+### A/B Testing
+
+Similar to canary release.
+
+A/B testing, also known as split testing, refers to a randomized experimentation process wherein two or more versions of a variable (web page, page element, etc.) are shown to different segments of website visitors at the same time to determine which version leaves the maximum impact and drives business metrics.
