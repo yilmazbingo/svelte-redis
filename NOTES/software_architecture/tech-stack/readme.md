@@ -59,7 +59,7 @@ Memcache is a centralized cache. every service node will be connected to the mem
 - we can have a cluster of nodes for memcache.
 - Memcache follows cache-aside pattern. Using the Cache-Aside Pattern dictates that when you want to retrieve an item from the Data Store, first you check in your cache. If the item exists in the cache, you can use that. If the item does not exist in the cache, you have to query the data store, however on the way back you drop the item in the cache.
 
-How does client know which cluster node it should visit for a particular key? cline t will compute the consistent hashing. client is managing the state of the nodes.
+How does client know which cluster node it should visit for a particular key? cline t will compute the consistent hashing (Memcached uses this). client is managing the state of the nodes.
 
 - retrieveing data latency is sub-miliseconds latency
 - If a Memcached server instance crashes, any object data stored within the session is gone
