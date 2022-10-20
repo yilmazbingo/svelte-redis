@@ -67,3 +67,9 @@ A final disadvantage to consider is that sharding isn’t natively supported by 
 Shard key is not primary key. Primary key can be a shard key but shard key cannot be a primary key.
 
 Key based sharding also known as hash-based sharding, involves a value taken from newly written data — such as customer ID number, a client application IP address, Zip Code etc — and plugging it into hash function to determine which shards data should go to. Hash value is the shard ID used to determine which shard the incoming data will be stored on. To ensure that entries are placed in the correct shards and in a consistent manner, the values entered into the hash function should all come from the same column. This column is known as a shard key. A shard key should be static, meaning it shouldn’t contain values that might change over time.
+
+you can choose combinations of columns as sharding key.
+
+solution is consistent hashing???
+
+the most important advantage is your data is evenly distributed.

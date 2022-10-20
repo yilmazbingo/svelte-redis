@@ -1,5 +1,5 @@
 - is this only for one restaurant for any number of restaurant like OpenTable
-            It is like OpenTable. it can cover many restaurants
+  It is like OpenTable. it can cover many restaurants
 - user wnat to select restaurant, enter their party size, find a list of available times near the time they want, lock in their reservation and get some sort of confirmation via sms. they also need some way to change or cancel reservations.
 
            ok good
@@ -18,9 +18,9 @@
 
 - we need a customer table and restaurant table tied together. define what fields you need for each table.
 - for the restaurant we also need to know the `layout` so we can match up the reservation requests to available tables. we might even need to move tables to accomodate large groups.
-- we also need to make some assumptions about how long it takes for a dining partyto finish their meal and clear the table for the next reservation. that is something that restaurant will have control over like length of time reservation lasts. maybe depends on the size of party or the time of the day.
-- we should also have some tables aside for the walk in customers.
-- finally we need a reservation table that ties it all together. so somewher we will have table of reservations partitioned by restaurant ID. also having `date` field to look up for existing reservations for a given date at a given restaurant which the algorithm will need to try and find an opening
+- we also need to make some assumptions about how long it takes for a dining party to finish their meal and clear the table for the next reservation. that is something that restaurant will have control over like length of time reservation lasts. maybe depends on the size of party or the time of the day.
+- we should also have some tables aside for the walk in customers. we should have restaurants specify how many tables they have available for walk in.
+- finally we need a reservation table that ties it all together, restaurant-customer. so somewher we will have table of reservations partitioned by restaurant ID so we can look up for the resarvation for the given restaurant. also having `date` field to look up for existing reservations for a given date at a given restaurant which the algorithm will need to try and find an opening
 
         is there a reason you are going for normalized data representation instead of dennormalized one. it is normalized because we are having Reservation table which references customer and restaurant table by their id. Denormalization is a database optimization technique in which we add redundant data to one or more tables. This can help us avoid costly joins in a relational database.
 
@@ -46,4 +46,4 @@
 
          what about caching? do we need it? How can we further improve the performance of this system?
 
-- well we do not have alot of static content. something like `CDN` would not do a whole alot of good. If the client applications are just webpages though, we would want a cdn for fast hosting of the css and javascript and images needed on the client side. we talked about hosting the app servers accross different regions and geo-routing to them so at least that would cut down on some latency. we would probably want some of cache for the database queies though. so the customer and restaurant data isnot likely change very often. we can use Memcachedd or Redis sitting on top of those queries. we could use memcached because we dont need anything fancier here.
+- well we do not have alot of static content. something like `CDN` would not do a whole alot of good. If the client applications are just webpages though, we would want a cdn for fast hosting of the css and javascript and images needed on the client side. we talked about hosting the app servers accross different regions and geo-routing to them so at least that would cut down on some latency. we would probably want some of cache for the database queies though. so the customer and restaurant data is not likely change very often. we can use Memcachedd or Redis sitting on top of those queries. we could use memcached because we dont need anything fancier here.

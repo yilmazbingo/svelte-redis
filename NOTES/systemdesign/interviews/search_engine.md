@@ -36,3 +36,5 @@ the other thind is PageRank, we need to extract any links to other pages and sto
 anchor links can also matter. we could treat those as just another entry in the index, where the anchor text is keyword, and page it links to in the document. Ultimately we need databse for between two documents, so whatever computes PageRank, can add up all the links to a given document and later use a signal to our search algorithm.
 
 so far we have 2 dbs. PageRank algorithm and Index. we need to tie those together.
+
+disadvantage is if your data increases, you have to add a new shard to scale. Now your hashing function has to change. since hashing function changes, your data in curent shards have to move. Same problem happens if you want to decrease the data.
