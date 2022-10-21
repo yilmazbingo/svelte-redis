@@ -90,3 +90,5 @@ Range sharding works best if there are a large number of possible values that ar
 - Since there is no hashing function you can add more machine. you wont need to move around the data.
 
 diasadvantage is inbaalanced shards. maybe price range more often in 20-40 dollars range. this range is called `hotspot`
+
+range based sharding is useful if your queriying alot with range based.
