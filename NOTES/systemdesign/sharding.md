@@ -73,3 +73,20 @@ you can choose combinations of columns as sharding key.
 solution is consistent hashing???
 
 the most important advantage is your data is evenly distributed.
+
+## Range Based Sharding
+
+You might need to partition the data rows based on months or years. If you query "Give me all the login details for January" then shard for january month will be requested.
+
+Or in an ecommerce website, you can shard data based on price range.
+
+The main benefit of range based sharding is that it’s relatively simple to implement. Every shard holds a different set of data but they all have an identical schema as one another, as well as the original database. The application code reads which range the data falls into and writes it to the corresponding shard.
+
+Range sharding works best if there are a large number of possible values that are fairly evenly distributed across the entire range. This design works poorly if most of the key values map to the same shard. Unfortunately, this architecture is prone to poor distribution of rows among the shards. A good design can still lead to an unbalanced distribution. For example, older accounts are more likely to have been deleted over the years, leaving the corresponding shard relatively empty. This leads to inefficiencies in the database. Choosing fairly large ranges can reduce, but not eliminate, this possibility.
+
+**Advantages**
+
+- You can have database schema for all your logical and phsical shard.
+- Since there is no hashing function you can add more machine. you wont need to move around the data.
+
+diasadvantage is inbaalanced shards. maybe price range more often in 20-40 dollars range. this range is called `hotspot`
