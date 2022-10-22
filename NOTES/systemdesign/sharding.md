@@ -92,3 +92,11 @@ Range sharding works best if there are a large number of possible values that ar
 diasadvantage is inbaalanced shards. maybe price range more often in 20-40 dollars range. this range is called `hotspot`
 
 range based sharding is useful if your queriying alot with range based.
+
+## Directory Based Sharding
+
+this is a type of dynamic sharding. we might have a config which maps which country goes to which shard. `countryA -> Shard1`. You can add more countries-shard in the future without touching the previous shards. Also you can easily remove the previous shards. That is why this is dynamic, we can dynamically remove or add shards.
+
+Like key based sharding, it can lead to hotspot.
+
+disadvantage is reading config for lookup increases the latency. also if the server where lookup table is stored is crashed entire application crashes. Single point of failure.
