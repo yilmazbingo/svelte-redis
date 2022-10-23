@@ -9,13 +9,17 @@ System is reliable even in the presence of partial failures. an airplane is reli
 If oven breaks in a bakery that is a system fault and noone's fault. Owner could not serve the cake so owner had a failure. Fault is cause, failure is effect. Fault tolerant means how baker is prepared to oven failure.
 
 1- we provide reduncany
+
 2- build a system such a way that it can detect faults that are happening in automated fashion
+
 3- then recoever from detected faults by using the reduncany that has been provided
 
 **Reduncancy** is about keeping redundant capacity (backup) within a system. Replication of critical components or functions of a system in order to increase its reliability. A secondary capacity is kept ready as a backup, over and above the primary capacity.
 
 1- Active Reduncany (Hot SPare)
 for a given component, we have two instances that are running simultaneously and we actually need only one of them. we cannot say wehich one is primary or secondary. both are primary. the load is distrubuted. if one of them goes down, the other one will take over. extremely quick and most ideal way of providing availbality. like engines in aeroplanes.
+
+If we had bug in our code reduncany wont help. to handle the bugs developers have to write unit tests.
 
 2- Passive Reduncancy (Warm Spare):
 we hve primary and standby. if primary goes down then the load is diverted to the secondary capacity. quick way of diverting the load. it wont be as quick as active reduncany. it is like substitite players in soccer game
@@ -32,9 +36,12 @@ dbs, message queues, cache, static content in static server are stateful compone
 Reduncany service is provided by the server hosts.
 
 - FOr databases we are going to create back up replica not read replica. replication can be done sync or async. benefit of sync is both dbs will be always in same state. It is done if changed made to both dbs otherwise it is not done. transactions are `atomic`. with async replication, transactions are not atomic but they are faster.
+
   with sync replication we have `active-active` reduncancy.
   in async replication, in case of primary failure, secondary replica will have to do catch up with the logs of last few transactions. once it does the catch up then only secondary can be promoted as primary. So switch over wont be quick because there is a catch up that secondary needs to do with the state of primary.
+
   If entire machine that primary instance run goes down, in that case, for secondary database, there is no way to catch up with the primary, then we have to promote the secondary without catch up so we lose some data. in async we have `passive reduncany`
+
 - the mechanism for the `message queues` is same.
 - Content Server. since data is immutable we are not worried about write conflicts.
 - Cache: cache is not the primary source of data. we might not need replication. In case cache server goes down we hit the db and that will bring down the performance. Memcache does not provide reduncany but redis provides
@@ -135,10 +142,12 @@ We have to test regularly
 What are approaches that are needed when a system is under severe load. What are the design practises that system remains stable?
 
 - if one of the services work very slow, some of the threads from a service that making a request to slow instance, may stuck. If we get fresh requests and those also sent to slow instance, that means service that making request to slow instance will lose more threads stuck on waiting response. Eventually we will lose all the threads. To prevent this we put timeout for a service. so we prevent the service to become completely unavailable.
-- Retries: this also applies to client components. If two clients want to reserve same ticket this is called race condition. One will fail and other will pass. This is a `transient` error because it was caused by a race condition. If the failed client retries, the transaction will be successful.
+- Retries: this also applies to client components. If two clients want to reserve same ticket this is called race condition. One will fail and other will pass. This is a `transient` error because it was caused by a race condition. If the failed client retries, the transaction will be successful. A transient error, also known as a transient fault, is an error that will resolve itself. Most typically these errors manifest as a connection to the database server being dropped. Also new connections to a server can't be opened. Transient errors can occur for example when hardware or network failure happens. hard to detect.
+
   Other kind of errors that we can do retries is the `system errors`. If client makes a request to instanceA which has a replica. if instanceA fails then if client makes request again, replica instance will respond. In both cases we return `HTTP 503 Service Unavailable` to the client so client to decide when to retry. Clients should retry with `exponential back-off`. Let's say we have only one database instance and it is down. we need to bring it up. if client fails after 2 seconds, do after 4 seconds, 8. so all the request will not be shifted to the other instance at the same time.
   We sometimes might be retrying even though our request was successful. Let's say client makes request to IstanceA which process the request, pass it to db and shuts down. since client does not see that it was processed and it will make the same request to other instance will make same change on db item. We should use `idempotent tokens`. When a client sends request to a service, it should have some kind of request id which can be saved in db to show that we have already executed the request. if we retry the request, it will not make change. those kind of requests are called `itempotent requests`
   Retires dont help for functional errors. maybe missing data
+
 - Circuit Breaker: Let's say client keeps track of failure rate of its requests. If number of failures within a given period exceeds a certain threshold, then it can stop making calls to the service. This pattern maintains a state machine. When all calls are going through, the state machine is in closed state. If client detects a failure rate beyond a certain threshold, the circuit breaker goes into the open state and this is where client stops making calls to the service. It relies on some default values. Whereever it is not possible to use default values, it will try to use the cached values. If client (service INstacne) cannot make use of either, it can send error messages back to its client. In the meantime, client will switch to half open which checks if service is back
 
 - Fail Fast & Shed Load: this is implemented on the server side.
