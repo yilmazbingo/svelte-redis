@@ -6,9 +6,12 @@ System is reliable even in the presence of partial failures. an airplane is reli
 
 ## Create Fault tolerant design
 
+If oven breaks in a bakery that is a system fault and noone's fault. Owner could not serve the cake so owner had a failure. Fault is cause, failure is effect. Fault tolerant means how baker is prepared to oven failure.
+
 1- we provide reduncany
 2- build a system such a way that it can detect faults that are happening in automated fashion
 3- then recoever from detected faults by using the reduncany that has been provided
+
 **Reduncancy** is about keeping redundant capacity (backup) within a system. Replication of critical components or functions of a system in order to increase its reliability. A secondary capacity is kept ready as a backup, over and above the primary capacity.
 
 1- Active Reduncany (Hot SPare)
@@ -92,11 +95,15 @@ https://www.n-able.com/blog/dns-cache-overview
 ## DataBase REcovery
 
 All this setups master-slave setup. master-master results in write conflict
+
 1- Hot Standby
+
 It is used in case of we do not want any downtime related recovery process. there will downtime but we want that downtime as low as possible. and we do not want any data loss because of recovery process. that is why we establish sync replication between primary-secondary. client communicates with the Primary and that communication is communicated to the secondary and only when it is written on secondary instances log file, and that acknowledgement is given back to the primary then only primary instance considers that transaction is done.
 Primary-Secondary need to closely located. Only then we will be able to do synchronous updates without much lag.
 writes are slow because we have to write on Primary and then to the secondary.
+
 2- Warm Standby
+
 the only difference is we setup async replication between primary and secondary. any changes that are done to the primary, they are put in a log file and these changes after small periods of time in small batches, they are communicated to the secondary instance.
 there is always catch up between primary-secondary.
 If primary instance is down, that means machine is not available but log file will be available. In the worst case, entire machine where instance and log are hosted can go down. so secondary would be missing those last changes in log file.

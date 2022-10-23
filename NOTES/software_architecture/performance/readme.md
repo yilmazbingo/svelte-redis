@@ -101,7 +101,9 @@ Where disk io is critical we can use `SSD` disk.
 - Context Switching
   It affects the entire system. It oftens affects the environments where we are running multiple processes on a machine or multiple threads on a machine. Let's say we have a single CPU machine and on that we are running two processses.
   Process1 is running on this machine and it is occupying CPU.Consequently process2 is waiting for process1 to evict CPU so that it can start its execution. All these has to be managed by the operating system. Process1 may try to do some IO, access disk or make a network call. If that happens, then this process will be evicted from CPU by the operating system. Not process2 can start its execution. When process1 ends its execution, after some delay process2 starts its execution. The question is why there is a delay between end of process1 and beginning of proceess2. OS first has to evict process1 so it will take this process from CPU and it will save this process in main memory. Next, OS will restore the process2 by loading process control block from memory and it will put it on CPU for execution. Then process2 will start its execution. Between process1 ended and process2 start, we have lost some time. We could avoid this wastage if we could avoid this context switch. Context swtihc happended because process1 had to do IO.
+
   **Minimizing CPU Latency**
+
 - Efficient algorithms and queries.
 - We have to focus on minimizing the context switching
   1- wherever applicable we can use BATCH?Async IO.

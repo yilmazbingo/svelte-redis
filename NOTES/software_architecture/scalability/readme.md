@@ -42,6 +42,8 @@ we do not cache anything on application. we wont get memory issue, we will have 
 
 ## Database Replication:
 
+Replication reduces latency. for example for each continient we can serve from a replica that is hosted on that continent.
+
 we can create `Read Replica` for higher read scalability. we can also create `backup` which is used for high availbality
 There are two replcations:
 
