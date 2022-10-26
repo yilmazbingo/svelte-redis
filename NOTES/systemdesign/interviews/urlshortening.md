@@ -55,3 +55,6 @@ we need to let people to add new url's to the system.
 301 is permanent redirect, 302 is temporary redirect. which one do u want? the browser is allowed to cache the 301 but 302 means it has t hit our system every time. assuming that we want to minimize the load to our system, 301 is right decision.
 
 if the user wants to edit their short urls, it might take more time than usual for browser to pick up the change because browser has the old one cached. Also, if you want to offer users metrics on how often their URL is getting hit, 301 would mean we would not necessarily see every hit from the client. So if you want analytics as a feature later on and a smooth user experience for editing urls, 302 is better choice.
+
+- If your service generates 1000/s calculate how many years need to exhaust the combination of numbers. if you are doing more requests per second, then you need to increase the number of characters.
+- database key=>value= tinyUrl => longUrl. generate the tiny url and check the database. If it does not exist, save it but if 2 users get same tinyUrl and this does not exist in db, they will both the get the same tinyUrl and this will be saved in db twice. To prevent this we use `putIfAbsent`. this works well with SQL dbs.
