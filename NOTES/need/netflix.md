@@ -17,3 +17,17 @@ Netflix also creates file optimized for different speed of internet. `adaptive b
 authentication and list of videos are handled by AWS. once you hit the play button, application will figure out the best open connect server and Open connect server will start streaming the video to the client. Client also smart enought to check the best available OC server around to get the best video quality. Recommendations are done by AWS machine learnign algorithm.
 
 ## ZULU
+
+It is a gateway service (Netflix built it) that provides dynamic routing, monitoring, resiliency and security. Request to netflix (uses proxy) go through: Inbound filter, Endpoint Filter, Outbound
+filter. Netflix will proxy the request to `Inbound Filter`, can be used for authentication, routing or decorating the reques.
+
+`Endpoint filter` can be used to return the static response or forward the request to the backend services. Once `endpoint filter` gets response from the services, it forwards the response to the outbound filter.
+
+`Outbound filter` can be used for gzipping the response, to calculate the metrics, add or remove the headers from the response.
+
+Advantages of `Zulu`
+
+1- You can shard the traffic from endpoint filter to send them to the services.
+2- Load testing: Let's say you have a new kind of server which is deployed in certain setup of machine. that way you can redirect the part of the traffic from `endpoint filter` to this server.
+3- Test new services:
+4- filter bad request: you can have custom rules set in endpoint filter. for example user-agent of a specific kind.
