@@ -31,3 +31,15 @@ Advantages of `Zulu`
 2- Load testing: Let's say you have a new kind of server which is deployed in certain setup of machine. that way you can redirect the part of the traffic from `endpoint filter` to this server.
 3- Test new services:
 4- filter bad request: you can have custom rules set in endpoint filter. for example user-agent of a specific kind.
+
+## Hystrix
+
+It is latency and fault tolerant library design. It isolate the points of access to remote system services and third-party libraries. in microservice, one endpoiunt can talk to many services. Let's say our `endpoint` is on one machine and needs to talk to any service that on a different machine. If one of the services is slow, whole endpoit might face latency.
+Hystrix stops cascading failures
+
+https://riteeksrivastava.medium.com/hystrix-what-is-it-and-why-is-it-used-f84614c8df5e
+
+1- if response time is higher than preset time, hystrix can stop the next stops. if microservice A takes more then 1 second, call to this microservice will be cancelled or default response will be given back.
+2- if thread pool for a microservice is full, it will not even accept next request, it will reject the call.
+3- if error rate is higher, it can also stop accepting requests.
+4- it collects the metrics
