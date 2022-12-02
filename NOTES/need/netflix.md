@@ -43,3 +43,24 @@ https://riteeksrivastava.medium.com/hystrix-what-is-it-and-why-is-it-used-f84614
 2- if thread pool for a microservice is full, it will not even accept next request, it will reject the call.
 3- if error rate is higher, it can also stop accepting requests.
 4- it collects the metrics
+
+## Microservices
+
+sometimes they use http or rpc calls between services. If you have too many microservices, how do u make this system more reliable.
+
+- `Hystrix` monitoring service helps here. Or separate the critical endpoints to reduce dependency of the srevices. critical dependency means if system has some issues, which services should be still working. at least search should work, they should navigate to their favourite videos and play those videos which are cached. user should be doing way basic things.
+- Make all your endpoints stateless: If one server is down to send request to microservices, we should be able to use another server. this is possiblle if you have a stateless endpoints.
+- some endpoints can be cached some cannot. Netflix has their custom caching layer, `EV Cache` based on memcache T. they have deployed alot of clusters on alot of EC2 instances in which there are so many nodes of memcache. they even have their cache client. when client gets a write request, it writes it to available nodes in that particular cluster. Read will always happend with the nearest cluster. with caching throughput will high, latency short, reduce the cost of deploying more api or endpoint servers.
+
+SSD sits between ram and harddisk and netflix uses those instead of rams.
+
+## DAtabase
+
+it uses MYSQL rmdbs and Cassandra nosql. billing information, transaction info, user info are saved in mysql as it needs acid compliance.
+
+- Netflix has master-master set up for Mysql which is deployed on amazon ec2. when data is written to a master, it replicated to another master node and then only acknowledge will be sent to query. each master node has read replicas which handles the scalability and high availability. Read replicas available locally accross data center.
+
+- Cassandra is open source, distributes,nosql, schemaless which can handle large amount of data. user hisotires for search, favourites etc made cassandra to reach full capacity. so netflix redesgined cassandra based on two goals:
+
+  1- smaller storage footprint
+  2- consistent read and write performance: Write:Read = 9:1
