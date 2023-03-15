@@ -1,3 +1,5 @@
+- A resilient app is one that continues to function despite failures of system components.
+
 - how to handle if some of your servers go down.
 
 - what if your database stop serving in entire region. maybe power surge will kill your entire system. what if hurricane hit your data center.

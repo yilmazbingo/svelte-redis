@@ -1,2 +1,4 @@
 - In SQL database design methodology, we first put everyting into the database and then figure out how we will query about that
 - Redis Design Methodology , we first figure out what queries we need to answer, and then we are going to structure our data
+- static pages should be cached
+- for gey we use `user#45` or `users:post#901` before identifier we use # instead of :

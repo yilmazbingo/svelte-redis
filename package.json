@@ -2,7 +2,7 @@
 	"name": "rbay",
 	"version": "0.0.1",
 	"scripts": {
-		"dev": "svelte-kit dev",
+		"dev": "svelte-kit dev -p 4000",
 		"build": "svelte-kit build",
 		"package": "svelte-kit package",
 		"preview": "svelte-kit preview",
@@ -55,7 +55,7 @@
 		"material-icons": "^1.10.7",
 		"nodemon": "^2.0.15",
 		"pm2": "^5.2.0",
-		"redis": "^4.3.0",
+		"redis": "^4.0.3",
 		"redis-cli": "^2.1.2",
 		"ts-node": "^10.5.0",
 		"ts-node-dev": "^1.1.8"

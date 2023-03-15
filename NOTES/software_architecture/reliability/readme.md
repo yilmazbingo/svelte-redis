@@ -1,3 +1,5 @@
+https://stackoverflow.com/questions/60534656/replication-vs-redundancy/75265465#75265465
+
 - RELIABILITY, AVAILABILITY, FAULT TOLERANCE
 
 System is reliable even in the presence of partial failures. an airplane is reliable because if one engine fails, it can still fly. it is measured as the probability of a system working correctly in a given time interval. Availability extends the reliability. Our system goes down when we do maintenance `successful Requests / totalRequsts`, `uptime/uptime+downtime`
@@ -48,7 +50,7 @@ Reduncany service is provided by the server hosts.
 
 ## Redundancy for Infrastructual Components
 
-- Secondary Load baalancers
+- Secondary Load balancers
 - if internet goes down, system goes down. Generally there are multiple internet connections in datacentres. What if entire datacentre goes down: earthquake, floads. So we have to have datacenter reduncancy. We can either provice `Zonal Redundancy` or `Regional Reduncancy`. the difference is distance between them.
 
 If they are separated by less than 10 miles, they are in the same city, it is `zonal redundancy`. It is Fault Isolation, one fire wont affect other. they need to communicate because we may like to have db on which we are going to write through our transactions located in one datacenter. Since we dont setup master-master (because it has write conflicts), if Master of inventory SErvice goes down, this datacenter has to connect with the other datacenter for wiriting to the master db of the Inventory Service. Communication is sync because they are close. If there is an earthquake in the city this structure wont help us. Active-Active setup, High Availability
@@ -117,10 +119,12 @@ If primary instance is down, that means machine is not available but log file wi
 
 - We use this in case of disaster recovery. we need a replica at a location which is a far away. In those locations the only possible replications is async.
   this gives us high performance becase client gets updated only when primary wrote the commitment.
-  3- Cold Database Recovery
-  this is cost effective because we do not have active running instances. The drawback of this method is that there is a significant amount of downtime involved because recovery involves importing database from backups and then starting those databases. A cold backup, also called an offline backup, is a database backup during which the database is offline and not accessible to update. we take the older backups and build database from there.
-  The most crucial structure for recovery operations is the `redo log`, which consists of two or more preallocated files that store all changes made to the database as they occur. those log files updated as change happens in our database
-  in case of faulure we will get older backup maybe 2 step older and populate it into the empty instance. Once this empty instance has been populated we will take last redo log files, find the corrupted statements, remove them and apply changes in those files.
+
+3- Cold Database Recovery
+this is cost effective because we do not have active running instances. The drawback of this method is that there is a significant amount of downtime involved because recovery involves importing database from backups and then starting those databases. A cold backup, also called an offline backup, is a database backup during which the database is offline and not accessible to update. we take the older backups and build database from there.
+The most crucial structure for recovery operations is the `redo log`, which consists of two or more preallocated files that store all changes made to the database as they occur. those log files updated as change happens in our database
+in case of faulure we will get older backup maybe 2 step older and populate it into the empty instance. Once this empty instance has been populated we will take last redo log files, find the corrupted statements, remove them and apply changes in those files.
+
 - Cold recovery is not an option. It is something that always has been done.
 - It can also helps us in disaster recovery.
 

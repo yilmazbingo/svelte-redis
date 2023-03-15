@@ -1,0 +1,3 @@
+- it is like a cross between a list and a sorted set. it is used to store the collections of different records. Used for communication between different servers.
+- so we can store information inside of a stream, the real goal is coordination and communication between servers or different processes
+- it is most useful when used with the feature called "consumer groups"

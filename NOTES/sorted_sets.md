@@ -11,6 +11,14 @@ score is inserted first.
 
 Think amazon selling shoes. Every shoe that we have, we create a separate hash. we want to apply ordering. maybe the shoes that have the most reviews, or ratings or purchases. we might want to list out to users the shoes sorted by which have the most reviews or ratings or the most purchases. For each different attribute, we would have a separate sorted set. then we just apply `zrange`.
 
+    sorted Set books:review
+
+        memberId   score
+    book:18          5
+    book:5           25
+
+We take the bookId and visit the hashes to find the hash with book:18
+
 - Creating relationship between records, sorted by some criteria.
 
-In this case imagine you have book selling app. there might be list of authors and books. Maybe two or more different authors wrote a book. each auther and book got hashed. now we need to create a relationship. in addition to that, we might also want to order this relationship based upon a number of reviews.
+In this case imagine you have book selling app. there might be list of authors and books. Maybe two or more different authors wrote a book. each auther and book got hashed. now we need to create a relationship. in addition to that, we might also want to order this relationship based upon a number of reviews. Myabe 2 authors work on same books. 79-section12

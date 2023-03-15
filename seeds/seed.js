@@ -19,6 +19,7 @@ import {
 	usernamesUniqueKey
 } from './seed-keys.js';
 
+console.log(typeof process.env.REDIS_HOST);
 const client = createClient({
 	socket: {
 		host: process.env.REDIS_HOST,
@@ -113,4 +114,8 @@ const run = async () => {
 	client.quit();
 };
 
-run();
+try {
+	run();
+} catch (e) {
+	console.error('error seeding', e);
+}

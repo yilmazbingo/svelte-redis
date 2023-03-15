@@ -1,8 +1,16 @@
 - redis is single threaded
+- if you want to pass todays world use strings
+
+`SET news 'Today\'s Headlines' EX 3 `
+`SET news "Today's Headlines" PX 2000 ` PX takes miliseconds value
+
+`SET color green GET` Set and then Get the previous color value.
+`SET asdf 'hi there' XX` set asdf only if it already exists
+`SET asdf 'hi there' NX` set asdf only if it does not exist. NX= Not exist
 
 ## why do we have expire option in `set`
 
-- `EX` allows you to designate how long to wait in miliseconds
+- `EX` allows you to designate how long to wait in miliseconds. when will this value expire. good for caching
 - `EXAT` and `PXAT` allow you to specify a date time, like an actual particular time
 - `KEEPTTL` means keep any expiration that has already been applied to this key
 
@@ -16,6 +24,37 @@ Now let's think about if another request comes in shortly after. this time, api 
 
 ## Set multiple keys
 
-- `SETEX` is same as `set` with `EX` option.
+- `SETEX` is same as `set` with `EX` option. `SET color red EX 2=SETEX color 2 red`. expire after 2 seconds.
 - `SET` with `NX` option is going to update or set a key value pair if it does not already exist. `setnx` is same
-- `MSET` is for multiple key value pairs.
+- `MSET` is for multiple key value pairs. `MSET color red car Toyota`
+- `DEL color`
+- `GETRANGE color 0 3` index 0-3 including 3rd
+- `SETRANGE color 2 blue` update the portion of string. FOr this you already should have `color`. so run `SET color red` THIS WILL RETURN THE LENGTH. `GET color` should return `reblue`
+
+## Why would we ever want to replace part of string
+
+if we are using colors, instead we could encode those values `red -> a green->b`. we can do this for type of our products or material of our products. In redis we might store them like this
+
+```js
+   // type-color-material
+item:1     aqg
+item:2     gbo
+```
+
+`GETRANGE item:1 0 1` maybe i care about only type and color
+`SETRANGE item:1 0 bcd`
+
+## Dealing with Numbers
+
+`INCR age` redis parses
+
+- let's say we have posts website and users upvote posts. popular posts might get upvotes all the time. Imagine that we have received two requests at exactly the same time to our API server asking to upvote a particular post. if we had 20 upvotes we expect to have 22. IN the system design we we might have two API Server connects to the same Redis db. If we are doing update in two round up fashion. `GET` AND `SET`.
+
+we are receiving the upvote request at exaxt same time. Redis will send back to both Api servers 20. at exact same time time, both of api servers will parse that number and add 1 to 21. and simultaneoulsy they both will tell redis let's update the value to 21.
+
+there are 3 possible solutions:
+1- Use a Redis transaction with "WATCH"
+2- Use a lock
+3- Use Incr
+
+Redis is synchronous and single threated in nature. that means that even if a tremendous number of commands are coming in at exactly the same time, like the smae microseconds, it does not make a difference to Redis. Redis only processes one command at a time.

@@ -1,4 +1,5 @@
 import { client } from '$services/redis';
+//  this creates a key to be consistent over all the app
 import { pageCacheKey } from '$services/keys';
 
 const cachedRoutes = ['/about', '/privacy', '/auth/signin', '/auth/signup'];
